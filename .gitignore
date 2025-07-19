@@ -4,3 +4,6 @@
 !init.el
 !.github/
 !.LICENSE
+!pre-early-init.el
+!pre-init.el
+!post-init.el
