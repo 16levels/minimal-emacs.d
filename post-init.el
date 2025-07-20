@@ -314,11 +314,28 @@
   (setq catppuccin-flavor 'latte)
   (catppuccin-reload))
 
+;;(use-package auto-dark
+;;  :ensure t
+;;  :config
+;;  (ignore-errors
+;;    (setq auto-dark-themes '((catppuccin) (catppuccin)))
+;;
+;;    (add-hook 'auto-dark-dark-mode-hook
+;;              (lambda ()
+;;                (setq catppuccin-flavor 'frappe)
+;;                (catppuccin-reload)))
+;;
+;;    (add-hook 'auto-dark-light-mode-hook
+;;              (lambda ()
+;;                (setq catppuccin-flavor 'latte)
+;;                (catppuccin-reload)))
+;;
+;;    (auto-dark-mode 1)))
+
+
 ;; Set the default font to Iosevka Term with specific size and weight
 (set-face-attribute 'default nil
-                    :height 130 :weight 'normal :family "Iosevka Term")
-
-
+                    :height 160 :weight 'normal :family "Iosevka Term")
 
 
 
@@ -594,9 +611,8 @@
         treemacs-width-is-initially-locked       t
         treemacs-workspace-switch-cleanup        nil)
 
-  ;; The default width and height of the icons is 22 pixels. If you are
-  ;; using a Hi-DPI display, uncomment this to double the icon size.
-  ;; (treemacs-resize-icons 44)
+  ;; The default width and height of the icons is 22 pixels.
+  (treemacs-resize-icons 16)
 
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
@@ -614,9 +630,9 @@
 
   (treemacs-hide-gitignored-files-mode nil))
 
-;; (use-package treemacs-evil
-;;   :after (treemacs evil)
-;;   :ensure t)
+(use-package treemacs-evil
+   :after (treemacs evil)
+   :ensure t)
 ;;
 ;; (use-package treemacs-icons-dired
 ;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
@@ -732,6 +748,14 @@
 (use-package nerd-icons
   :ensure t)
 
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
+(use-package treemacs-all-the-icons
+  :config
+  (treemacs-load-theme 'all-the-icons))
+
 (use-package doom-modeline
   :ensure t
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)

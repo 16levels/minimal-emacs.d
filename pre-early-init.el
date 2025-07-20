@@ -13,5 +13,8 @@
 ;; replace the package manager, there is no need to call it.
 (setq minimal-emacs-package-initialize-and-refresh nil)
 
-(set-frame-parameter nil 'alpha-background 96)
-(add-to-list 'default-frame-alist '(alpha-background . 96))
+(set-frame-parameter nil 'alpha-background 94)
+(add-to-list 'default-frame-alist '(alpha-background . 94))
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
