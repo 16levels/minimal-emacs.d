@@ -422,6 +422,15 @@
   :config
   (evil-collection-init))
 
+(use-package evil-escape
+  :after evil
+  :ensure t
+  :init
+  (setq-default evil-escape-key-sequence "jk")
+  (setq-default evil-escape-delay 0.2)
+  :config
+  (evil-escape-mode))
+
 ;; Give Emacs tab-bar a style similar to Vim's
 (use-package vim-tab-bar
   :ensure t
@@ -720,7 +729,7 @@
 (use-package magit
   :ensure t)
 
-(use-package nerd-icons 
+(use-package nerd-icons
   :ensure t)
 
 (use-package doom-modeline
