@@ -314,29 +314,36 @@
   (setq catppuccin-flavor 'latte)
   (catppuccin-reload))
 
-;;(use-package auto-dark
-;;  :ensure t
-;;  :config
-;;  (ignore-errors
-;;    (setq auto-dark-themes '((catppuccin) (catppuccin)))
+;; `auto-dark-mode` introduces a minor mode that enables automatic switching
+;;  between two user-defined themes. This transition occurs seamlessly in
+;;  response to dark mode being enabled or disabled across platforms.
 ;;
-;;    (add-hook 'auto-dark-dark-mode-hook
-;;              (lambda ()
-;;                (setq catppuccin-flavor 'frappe)
-;;                (catppuccin-reload)))
+;; Grab fork with fix for GNOME Desktops from github.
+(elpaca (auto-dark :host github :repo "16levels/auto-dark-emacs" :branch "master"))
 ;;
-;;    (add-hook 'auto-dark-light-mode-hook
-;;              (lambda ()
-;;                (setq catppuccin-flavor 'latte)
-;;                (catppuccin-reload)))
-;;
-;;    (auto-dark-mode 1)))
+(use-package auto-dark
+  ;; Uncomment line below when GNOME Desktop bug is addressed upstream:
+  ;;  :ensure t
+  :config
+  (ignore-errors
+    (setq auto-dark-themes '((catppuccin) (catppuccin)))
+
+    (add-hook 'auto-dark-dark-mode-hook
+              (lambda ()
+                (setq catppuccin-flavor 'frappe)
+                (catppuccin-reload)))
+
+    (add-hook 'auto-dark-light-mode-hook
+              (lambda ()
+                (setq catppuccin-flavor 'latte)
+                (catppuccin-reload)))
+
+    (auto-dark-mode 1)))
 
 
 ;; Set the default font to Iosevka Term with specific size and weight
 (set-face-attribute 'default nil
-                    :height 160 :weight 'normal :family "Iosevka Term")
-
+                    :height 120 :weight 'normal :family "Iosevka Term")
 
 
 ;; The stripspace Emacs package provides stripspace-local-mode, a minor mode
@@ -631,8 +638,8 @@
   (treemacs-hide-gitignored-files-mode nil))
 
 (use-package treemacs-evil
-   :after (treemacs evil)
-   :ensure t)
+  :after (treemacs evil)
+  :ensure t)
 ;;
 ;; (use-package treemacs-icons-dired
 ;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
@@ -645,6 +652,13 @@
 ;;
 ;; (treemacs-start-on-boot)
 
+;; Enable relative line numbers for Prog mode buffers.
+(add-hook 'prog-mode-hook (lambda ()
+                            (display-line-numbers-mode)
+                            (setq display-line-numbers 'relative)))
+
+;; `avy` is an Emacs package for jumping to visible text using a char-based
+;; decision tree.
 (use-package avy
   :ensure t
   :commands (avy-goto-char
@@ -727,6 +741,7 @@
 ;; Prevent Emacs from saving customization information to a custom file
 (setq custom-file null-device)
 
+;; Enable ligatures
 (use-package ligature
   :ensure t
   :config
@@ -739,23 +754,26 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
+;; Transient is the library used to implement the keyboard-driven "menus"
+;; in Magit.
 (use-package transient
   :ensure t)
 
+;; Magit is an interface to the version control system Git.
 (use-package magit
   :ensure t)
 
-(use-package nerd-icons
-  :ensure t)
-
+;; A utility package to collect various icon fonts and propertize them.
 (use-package all-the-icons
   :ensure t
   :if (display-graphic-p))
 
+;; `all-the-icons` integration for treemacs.
 (use-package treemacs-all-the-icons
   :config
   (treemacs-load-theme 'all-the-icons))
 
+;; A fancy and fast mode-line inspired by minimalism design.
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))

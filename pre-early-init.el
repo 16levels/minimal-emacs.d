@@ -13,8 +13,10 @@
 ;; replace the package manager, there is no need to call it.
 (setq minimal-emacs-package-initialize-and-refresh nil)
 
+;; Set background transparency
 (set-frame-parameter nil 'alpha-background 94)
 (add-to-list 'default-frame-alist '(alpha-background . 94))
 
+;; Enable transparent titlebar in macOS
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
