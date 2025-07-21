@@ -318,12 +318,8 @@
 ;;  between two user-defined themes. This transition occurs seamlessly in
 ;;  response to dark mode being enabled or disabled across platforms.
 ;;
-;; Grab fork with fix for GNOME Desktops from github.
-(elpaca (auto-dark :host github :repo "16levels/auto-dark-emacs" :branch "master"))
-;;
 (use-package auto-dark
-  ;; Uncomment line below when GNOME Desktop bug is addressed upstream:
-  ;;  :ensure t
+  :ensure t
   :config
   (ignore-errors
     (setq auto-dark-themes '((catppuccin) (catppuccin)))
