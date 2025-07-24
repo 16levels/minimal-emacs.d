@@ -468,7 +468,7 @@
   (add-to-list 'eglot-server-programs
                '(python-ts-mode . ("pyright-langserver" "--stdio"))
                '(go-mode . ("gopls")))
-  :hook ((go-ts-mode ocaml-eglot python-ts-mode rust-ts-mode) . eglot-ensure)
+  :hook ((dockerfile-ts-mode go-ts-mode ocaml-eglot python-ts-mode rust-ts-mode yaml-ts-mode) . eglot-ensure)
   :commands (eglot-ensure
              eglot-rename
              eglot-format-buffer))
