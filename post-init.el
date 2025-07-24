@@ -338,7 +338,13 @@
 
 ;; Set the default font to Iosevka Term with specific size and weight
 (set-face-attribute 'default nil
+                    :height 120 :weight 'normal :family "Iosevka")
+
+(set-face-attribute 'fixed-pitch nil
                     :height 120 :weight 'normal :family "Iosevka Term")
+
+(set-face-attribute 'variable-pitch nil
+                    :height 120 :weight 'normal :family "Iosevka Aile")
 
 ;; The stripspace Emacs package provides stripspace-local-mode, a minor mode
 ;; that automatically removes trailing whitespace and blank lines at the end of
@@ -476,6 +482,7 @@
   :commands (org-mode org-version)
   :mode
   ("\\.org\\'" . org-mode)
+  :hook (org-mode . variable-pitch-mode)
   :custom
   (org-hide-leading-stars t)
   (org-startup-indented t)
@@ -486,6 +493,38 @@
   (org-fontify-whole-heading-line t)
   (org-fontify-quote-and-verse-blocks t)
   (org-startup-truncated t))
+
+;; `org-modern` implements a modern style for your Org buffers using font locking
+;; and text properties.
+(use-package org-modern
+  :ensure t
+  :after org
+  :config
+  ;; Make sure certain org faces use the fixed-pitch face when variable-pitch-mode is on
+  (require 'org-faces)
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+  :hook (org-mode . org-modern-mode)
+  :init
+  (setq
+   ;; Edit settings
+   org-auto-align-tags nil
+   org-tags-column 0
+   org-catch-invisible-edits 'show-and-error
+   org-special-ctrl-a/e t
+   org-insert-heading-respect-content t
+
+   ;; Org styling, hide markup etc.
+   org-hide-emphasis-markers t
+   org-pretty-entities t
+   org-agenda-tags-column 0
+   org-ellipsis "…"))
 
 ;; The markdown-mode package provides a major mode for Emacs for syntax
 ;; highlighting, editing commands, and preview support for Markdown documents.
