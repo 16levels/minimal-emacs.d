@@ -6,6 +6,8 @@
 (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
 (setq user-emacs-directory minimal-emacs-var-dir)
 
+
+
 (setq minimal-emacs-ui-features '(context-menu dialogs tooltips))
 
 ;; By default, minimal-emacs-package-initialize-and-refresh is set to t, which

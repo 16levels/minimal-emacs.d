@@ -336,11 +336,9 @@
 
     (auto-dark-mode 1)))
 
-
 ;; Set the default font to Iosevka Term with specific size and weight
 (set-face-attribute 'default nil
                     :height 120 :weight 'normal :family "Iosevka Term")
-
 
 ;; The stripspace Emacs package provides stripspace-local-mode, a minor mode
 ;; that automatically removes trailing whitespace and blank lines at the end of
@@ -460,10 +458,14 @@
 ;; Set up the Language Server Protocol (LSP) servers using Eglot.
 (use-package eglot
   :ensure nil
+  :config
+  (add-to-list 'eglot-server-programs
+               '(python-ts-mode . ("pyright-langserver" "--stdio"))
+               '(go-mode . ("gopls")))
+  :hook ((go-ts-mode ocaml-eglot python-ts-mode rust-ts-mode) . eglot-ensure)
   :commands (eglot-ensure
              eglot-rename
              eglot-format-buffer))
-
 ;; Org mode is a major mode designed for organizing notes, planning, task
 ;; management, and authoring documents using plain text with a simple and
 ;; expressive markup syntax. It supports hierarchical outlines, TODO lists,
@@ -479,10 +481,10 @@
   (org-startup-indented t)
   (org-adapt-indentation nil)
   (org-edit-src-content-indentation 0)
-  ;; (org-fontify-done-headline t)
-  ;; (org-fontify-todo-headline t)
-  ;; (org-fontify-whole-heading-line t)
-  ;; (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-done-headline t)
+  (org-fontify-todo-headline t)
+  (org-fontify-whole-heading-line t)
+  (org-fontify-quote-and-verse-blocks t)
   (org-startup-truncated t))
 
 ;; The markdown-mode package provides a major mode for Emacs for syntax
@@ -773,3 +775,71 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+
+;; vterm is a fully-fledged terminal emulator based on libvterm, a C library.
+(use-package vterm
+  :ensure t)
+
+;; Tuareg: an Emacs OCaml mode.
+(use-package tuareg
+  :init
+  (add-to-list 'exec-path (concat (getenv "HOME") "/.opam/default/bin")
+               (concat (getenv "OPAMROOT") "/default/bin"))
+  :ensure t)
+
+;; An overlay on Eglot for editing OCaml code using LSP
+(use-package ocaml-eglot
+  :ensure t
+  :hook
+  (tuareg-mode . ocaml-eglot)
+  (ocaml-eglot . eglot-ensure)
+  :after tuareg)
+
+;; Additional OCaml modes
+(use-package dune
+  :ensure t)
+
+(use-package opam-switch-mode
+  :ensure t
+  :hook
+  (tuareg-mode . opam-switch-mode))
+
+(use-package ocp-indent
+  :ensure t
+  :config
+  (add-hook 'ocaml-eglot-hook 'ocp-setup-indent))
+
+;; `rust-mode` makes editing Rust code with Emacs enjoyable.
+(use-package rust-mode
+  :ensure t
+  :init
+  (setq rust-mode-treesitter-derive t))
+
+;; go-mode, the Emacs mode for editing Go code.
+(use-package go-mode
+  :hook (go-mode . eglot-ensure)
+  :mode ("\\.go\\'" . go-mode)
+  :init
+  (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
+  :ensure t)
+;; Tell eglot to look for the nearest parent `go.mod` file as the project root.
+(require 'project)
+
+(defun project-find-go-module (dir)
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+    (cons 'go-module root)))
+
+(cl-defmethod project-root ((project (head go-module)))
+  (cdr project))
+
+(add-hook 'project-find-functions #'project-find-go-module)
+
+;; highlight-indent-guides.el is a minor mode that highlights indentation levels via `font-lock`
+(use-package highlight-indent-guides
+  :ensure t
+  :init
+  (setq highlight-indent-guides-method 'column)
+  (setq highlight-indent-guides-responsive 'top)
+  :hook
+  (highlight-indent-guides-mode . hl-line-mode)
+  (prog-mode . highlight-indent-guides-mode))
