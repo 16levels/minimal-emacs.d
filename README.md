@@ -91,12 +91,12 @@ In addition to *minimal-emacs.d*, startup speed is influenced by your computer's
     - [A better Emacs *help* buffer](#a-better-emacs-help-buffer)
     - [Enhancing the Elisp development experience](#enhancing-the-elisp-development-experience)
     - [Showing the tab-bar](#showing-the-tab-bar)
-    - [Preventing Emacs from saving custom.el](#preventing-emacs-from-saving-customel)
     - [Changing the Default Font](#changing-the-default-font)
+    - [Loading the custom.el file](#loading-the-customel-file)
     - [Which other customizations can be interesting to add?](#which-other-customizations-can-be-interesting-to-add)
   - [Customizations: pre-early-init.el](#customizations-pre-early-initel)
     - [Configuring straight.el](#configuring-straightel)
-    - [Configuring elpaca (package manager)](#configuring-elpaca-package-manager)
+    - [Configuring Elpaca (package manager)](#configuring-elpaca-package-manager)
   - [Frequently asked questions](#frequently-asked-questions)
     - [Customizing Scroll Recentering](#customizing-scroll-recentering)
     - [How to display Emacs startup duration?](#how-to-display-emacs-startup-duration)
@@ -1466,14 +1466,6 @@ Configure the `tab-bar-show` variable to 1 to display the tab bar exclusively wh
 (setopt tab-bar-show 1)
 ```
 
-### Preventing Emacs from saving custom.el
-
-To prevent Emacs from saving customization information to a custom file, set `custom-file` to `null-device` by adding to the following to `~/.emacs.d/post-init.el`:
-``` emacs-lisp
-;; Prevent Emacs from saving customization information to a custom file
-(setq custom-file null-device)
-```
-
 ### Changing the Default Font
 
 To customize the default font, add the following expression to your `~/.emacs.d/post-init.el`:
@@ -1491,6 +1483,20 @@ To customize the default font, add the following expression to your `~/.emacs.d/
 On Linux, you can display a comprehensive list of all installed font families by executing the following command:
 ```
 fc-list : family | sed 's/,/\n/g' | sort -u
+```
+
+### Loading the custom.el file
+
+**NOTE:** The author advises against loading `custom.el`. To disable it, set `custom-file` to the null device using `(setq custom-file null-device)`. Users are instead encouraged to define their configuration programmatically in files such as `post-init.el`. Maintaining configuration programmatically offers several advantages: it ensures reproducibility and facilitates version control. This makes it easier to understand, audit, and evolve the configuration over time.
+
+In Emacs, customization variables modified via the UI (e.g., `M-x customize`) are typically stored in a separate file, commonly named `custom.el`. To ensure these settings are loaded during Emacs initialization, it is necessary to explicitly load this file if it exists. To accomplish this, add the following form to your `~/.emacs.d/post-init.el`:
+
+```elisp
+;; In Emacs, customization variables modified via the UI (e.g., M-x customize)
+;; are typically stored in a separate file, commonly named 'custom.el'. To
+;; ensure these settings are loaded during Emacs initialization, it is necessary
+;; to explicitly load this file if it exists.
+(load custom-file 'noerror 'no-message)
 ```
 
 ### Which other customizations can be interesting to add?
