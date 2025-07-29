@@ -854,7 +854,7 @@
   :init
   (setq rust-mode-treesitter-derive t))
 
-;; go-mode, the Emacs mode for editing Go code.
+;; `go-mode`, the Emacs mode for editing Go code.
 (use-package go-mode
   :hook (go-mode . eglot-ensure)
   :mode ("\\.go\\'" . go-mode)
@@ -872,6 +872,10 @@
   (cdr project))
 
 (add-hook 'project-find-functions #'project-find-go-module)
+
+;; `adoc-mode` is an Emacs major mode for editing AsciiDoc files.
+(use-package adoc-mode
+  :ensure t)
 
 ;; highlight-indent-guides.el is a minor mode that highlights indentation levels via `font-lock`
 (use-package highlight-indent-guides
