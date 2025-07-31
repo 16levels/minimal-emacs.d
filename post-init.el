@@ -87,6 +87,7 @@
 
   ;; Enable Corfu
   :config
+  (setq corfu-auto t)
   (global-corfu-mode))
 
 ;; Cape, or Completion At Point Extensions, extends the capabilities of
@@ -853,6 +854,10 @@
   :ensure t
   :init
   (setq rust-mode-treesitter-derive t))
+
+;; `CIDER` is the Clojure Interactive Development Environment that Rocks.
+(use-package cider
+  :ensure t)
 
 ;; `go-mode`, the Emacs mode for editing Go code.
 (use-package go-mode
