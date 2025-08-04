@@ -320,6 +320,7 @@
 ;;  response to dark mode being enabled or disabled across platforms.
 ;;
 (use-package auto-dark
+  :if (display-graphic-p)
   :ensure t
   :config
   (ignore-errors
@@ -457,10 +458,10 @@
   (evil-escape-mode))
 
 ;; Give Emacs tab-bar a style similar to Vim's
-(use-package vim-tab-bar
-  :ensure t
-  :commands vim-tab-bar-mode
-  :hook (elpaca-after-init . vim-tab-bar-mode))
+;;(use-package vim-tab-bar
+;;  :ensure t
+;;  :commands vim-tab-bar-mode
+;;  :hook (elpaca-after-init . vim-tab-bar-mode))
 
 ;; Set up the Language Server Protocol (LSP) servers using Eglot.
 (use-package eglot
@@ -473,6 +474,7 @@
   :commands (eglot-ensure
              eglot-rename
              eglot-format-buffer))
+
 ;; Org mode is a major mode designed for organizing notes, planning, task
 ;; management, and authoring documents using plain text with a simple and
 ;; expressive markup syntax. It supports hierarchical outlines, TODO lists,
@@ -818,6 +820,7 @@
 
 ;; vterm is a fully-fledged terminal emulator based on libvterm, a C library.
 (use-package vterm
+  :if (display-graphic-p)
   :ensure t)
 
 ;; Tuareg: an Emacs OCaml mode.
