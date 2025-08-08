@@ -20,7 +20,7 @@ Building the *minimal-emacs.d* `init.el` and `early-init.el` was the result of *
 The *minimal-emacs.d* project is:
 - **Minimal yet effective:** A solid starting point.
 - **Better defaults:** Improved settings for usability, UI, garbage collection, and built-in packages.
-- **0 packages loaded / No forced modes:** Unlike other frameworks or starter kits, *minimal-emacs.d* does not impose modes or require packages. **You have full control** over which global or minor modes to enable and which packages to load with `require`.
+- **0 packages loaded / No forced modes:** Unlike other frameworks or starter kits, *minimal-emacs.d* does not impose modes or require packages. **You have full control** over which global or minor modes to enable and which packages to load.
 - **Customizable foundation:** Designed to be extended, not replaced. This README.md offers extensive recommendations for customizing your *minimal-emacs.d* configuration. (Reminder: [Never modify init.el and early-init.el. Modify these instead...](#customizations-never-modify-initel-and-early-initel-modify-these-instead))
 
 The *minimal-emacs.d* project includes two initialization files:
@@ -215,24 +215,6 @@ An alternative lightweight approach is to simply change the default `~/.emacs.d`
 (setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 ```
 
-It is also useful to ensure that Emacs consistently utilizes the specified ELN cache directory for native compilation, thereby preventing it from generating or loading .eln files in the default system or user-standard locations. This guarantees that both the loading and writing of native-compiled files occur exclusively within the user-defined cache directory, avoiding permission issues and path inconsistencies. Add the following code to `~/.emacs.d/pre-early-init.el`
-``` emacs-lisp
-;; NOTE: This must be placed in 'pre-early-init.el'.
-(when (featurep 'native-compile)
-  ;; Ensure Emacs consistently uses the specified ELN cache directory for native
-  ;; compilation, preventing it from creating or loading .eln files in the
-  ;; default system or user-standard paths. This guarantees that both loading
-  ;; and writing of native-compiled files happen exclusively in the user-defined
-  ;; cache directory, avoiding permission issues and path inconsistencies.
-  (let ((eln-cache-dir (convert-standard-filename
-                        (expand-file-name "eln-cache" user-emacs-directory))))
-    (when (boundp 'native-comp-eln-load-path)
-      (setcar native-comp-eln-load-path eln-cache-dir))
-    (setq native-compile-target-directory eln-cache-dir)
-    (when (fboundp 'startup-redirect-eln-cache)
-      (startup-redirect-eln-cache eln-cache-dir))))
-```
-
 **IMPORTANT:** The code above should be added to `~/.emacs.d/pre-early-init.el`, not the other files, as it modifies the behavior of all subsequent init files.
 
 ## Customizations: Packages (post-init.el)
@@ -293,28 +275,71 @@ The recentf, savehist, saveplace, and auto-revert built-in packages are already 
 ;; Auto-revert in Emacs is a feature that automatically updates the
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
-(add-hook 'after-init-hook #'global-auto-revert-mode)
+(use-package autorevert
+  :ensure nil
+  :commands (auto-revert-mode global-auto-revert-mode)
+  :hook
+  (after-init . global-auto-revert-mode)
+  :custom
+  (auto-revert-interval 3)
+  (auto-revert-remote-files nil)
+  (auto-revert-use-notify t)
+  (auto-revert-avoid-polling nil)
+  (auto-revert-verbose t))
 
-;; recentf is an Emacs package that maintains a list of recently
+;; Recentf is an Emacs package that maintains a list of recently
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
-(add-hook 'after-init-hook #'(lambda()
-                               (let ((inhibit-message t))
-                                 (recentf-mode 1))))
+(use-package recentf
+  :ensure nil
+  :commands (recentf-mode recentf-cleanup)
+  :hook
+  (after-init . recentf-mode)
 
-(with-eval-after-load "recentf"
-  (add-hook 'kill-emacs-hook #'recentf-cleanup))
+  :custom
+  (recentf-auto-cleanup (if (daemonp) 300 'never))
+  (recentf-exclude
+   (list "\\.tar$" "\\.tbz2$" "\\.tbz$" "\\.tgz$" "\\.bz2$"
+         "\\.bz$" "\\.gz$" "\\.gzip$" "\\.xz$" "\\.zip$"
+         "\\.7z$" "\\.rar$"
+         "COMMIT_EDITMSG\\'"
+         "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"
+         "-autoloads\\.el$" "autoload\\.el$"))
+
+  :config
+  ;; A cleanup depth of -90 ensures that `recentf-cleanup' runs before
+  ;; `recentf-save-list', allowing stale entries to be removed before the list
+  ;; is saved by `recentf-save-list', which is automatically added to
+  ;; `kill-emacs-hook' by `recentf-mode'.
+  (add-hook 'kill-emacs-hook #'recentf-cleanup -90))
 
 ;; savehist is an Emacs feature that preserves the minibuffer history between
 ;; sessions. It saves the history of inputs in the minibuffer, such as commands,
 ;; search strings, and other prompts, to a file. This allows users to retain
 ;; their minibuffer history across Emacs restarts.
-(add-hook 'after-init-hook #'savehist-mode)
+(use-package savehist
+  :ensure nil
+  :commands (savehist-mode savehist-save)
+  :hook
+  (after-init . savehist-mode)
+  :custom
+  (savehist-autosave-interval 600)
+  (savehist-additional-variables
+   '(kill-ring                        ; clipboard
+     register-alist                   ; macros
+     mark-ring global-mark-ring       ; marks
+     search-ring regexp-search-ring)))
 
 ;; save-place-mode enables Emacs to remember the last location within a file
 ;; upon reopening. This feature is particularly beneficial for resuming work at
 ;; the precise point where you previously left off.
-(add-hook 'after-init-hook #'save-place-mode)
+(use-package saveplace
+  :ensure nil
+  :commands (save-place-mode save-place-local-mode)
+  :hook
+  (after-init . save-place-mode)
+  :custom
+  (save-place-limit 400))
 ```
 
 ### Activating autosave
@@ -1569,6 +1594,9 @@ In Emacs, customization variables modified via the UI (e.g., `M-x customize`) ar
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Dividers.html
 (add-hook 'after-init-hook #'window-divider-mode)
 
+;; Constrain vertical cursor movement to lines within the buffer
+(setq dired-movement-style 'bounded-files)
+
 ;; Dired buffers: Automatically hide file details (permissions, size,
 ;; modification date, etc.) and all the files in the `dired-omit-files' regular
 ;; expression for a cleaner display.
@@ -1586,6 +1614,16 @@ In Emacs, customization variables modified via the UI (e.g., `M-x customize`) ar
                                "\\|^flycheck_.*"
                                "\\|^flymake_.*"))
 (add-hook 'dired-mode-hook #'dired-omit-mode)
+
+;; dired: Group directories first
+(with-eval-after-load 'dired
+  (let ((args "--group-directories-first -ahlv"))
+    (when (or (eq system-type 'darwin) (eq system-type 'berkeley-unix))
+      (if-let* ((gls (executable-find "gls")))
+          (setq insert-directory-program gls)
+        (setq args nil)))
+    (when args
+      (setq dired-listing-switches args))))
 
 ;; Enables visual indication of minibuffer recursion depth after initialization.
 (add-hook 'after-init-hook #'minibuffer-depth-indicate-mode)
