@@ -1,5 +1,7 @@
-;;; pre-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
-;;;
+;;; post-init.el --- Loads after `init.el`. -*- no-byte-compile: t; lexical-binding: t; -*-
+;;                   Use for additional configurations or package setups that depend on
+;;                   the configurations in `init.el`.
+
 ;; Native compilation enhances Emacs performance by converting Elisp code into
 ;; native machine code, resulting in faster execution and improved
 ;; responsiveness.
@@ -470,7 +472,7 @@
   (add-to-list 'eglot-server-programs
                '(python-ts-mode . ("pyright-langserver" "--stdio"))
                '(go-mode . ("gopls")))
-  :hook ((dockerfile-ts-mode go-ts-mode ocaml-eglot python-ts-mode rust-ts-mode yaml-ts-mode) . eglot-ensure)
+  :hook ((dockerfile-ts-mode c-ts-mode ocaml-eglot python-ts-mode rust-ts-mode yaml-ts-mode) . eglot-ensure)
   :commands (eglot-ensure
              eglot-rename
              eglot-format-buffer))

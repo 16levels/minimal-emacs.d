@@ -1,4 +1,6 @@
-;;; pre-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+;;; pre-early-init.el --- Loads before `early-init.el`. -*- no-byte-compile: t; lexical-binding: t; -*-
+;;                        Use for configurations that need to be set even earlier in the startup
+;;                        sequence, typically affecting the inital setup of the Emacs environment.
 
 ;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
 ;; IMPORTANT: This part should be in the pre-early-init.el file

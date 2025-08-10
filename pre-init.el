@@ -1,3 +1,7 @@
+;;; pre-init.el --- Loads before `init.el`. -*- no-byte-compile: t; lexical-binding: t; -*-
+;;                  Use to set up variables or configurations that need to be available
+;;                  early in the initialization process but after `early-init.el`.
+
 ;; Elpaca bootstrap
 (defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
