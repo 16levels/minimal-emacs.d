@@ -272,9 +272,10 @@
 ;; Keep screen position if scroll command moved it vertically out of the window.
 (setq scroll-preserve-screen-position t)
 
-;; If `scroll-conservatively' is set above 100, the window is never
-;; automatically recentered, which decreases the time spend recentering.
-(setq scroll-conservatively 101)
+;; Emacs recenters the window when the cursor moves past `scroll-conservatively'
+;; lines beyond the window edge. A value over 101 disables recentering; the
+;; default (0) is too eager. Here it is set to 20 for a balanced behavior.
+(setq scroll-conservatively 20)
 
 ;; 1. Preventing automatic adjustments to `window-vscroll' for long lines.
 ;; 2. Resolving the issue of random half-screen jumps during scrolling.
@@ -404,7 +405,6 @@
       dired-recursive-copies 'always
       dired-vc-rename-file t
       dired-create-destination-dirs 'ask
-      dired-mouse-drag-files t
       ;; Suppress Dired buffer kill prompt for deleted dirs
       dired-clean-confirm-killing-deleted-buffers nil)
 
@@ -529,7 +529,8 @@
 (setq dabbrev-upcase-means-case-search t)
 
 (setq dabbrev-ignored-buffer-modes
-      '(archive-mode image-mode docview-mode tags-table-mode pdf-view-mode))
+      '(archive-mode image-mode docview-mode tags-table-mode
+                     pdf-view-mode tags-table-mode))
 
 (setq dabbrev-ignored-buffer-regexps
       '(;; - Buffers starting with a space (internal or temporary buffers)
@@ -549,8 +550,6 @@
 (when (fboundp 'minimal-emacs-load-user-init)
   (minimal-emacs-load-user-init "post-init.el"))
 (setq minimal-emacs--success t)
-
-(provide 'init)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not obsolete free-vars)
