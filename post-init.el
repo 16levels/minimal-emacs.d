@@ -827,9 +827,6 @@
 
 ;; Tuareg: an Emacs OCaml mode.
 (use-package tuareg
-  :init
-  (add-to-list 'exec-path (concat (getenv "HOME") "/.opam/default/bin")
-               (concat (getenv "OPAMROOT") "/default/bin"))
   :ensure t)
 
 ;; An overlay on Eglot for editing OCaml code using LSP
@@ -869,7 +866,6 @@
   :hook (go-mode . eglot-ensure)
   :mode ("\\.go\\'" . go-mode)
   :init
-  (add-to-list 'exec-path (concat (getenv "HOME") "/go/bin"))
   :ensure t)
 ;; Tell eglot to look for the nearest parent `go.mod` file as the project root.
 (require 'project)
